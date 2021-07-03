@@ -1,6 +1,6 @@
 ---
 title: "Smoothing Splines"
-author: "Vito Simone Lacatena mat.747810"
+author: "Vito Simone Lacatena 747810"
 date: "3/7/2021"
 output: pdf_document
 ---
@@ -11,16 +11,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1. Introduzione
 
-Parte Introduttiva.
+<p> Il modello di regressione polinomiale estende il modello di regressione lineare attraverso l'aggiunta di ulteriori variabili ottenuti dalla variabile origianli elevandoli ad una potenza. Ovvero si estendo il modello lineare classico</p>
+
+$y_i$ = $\beta_0$  + $\beta_1 x_i +  \epsilon_i$
+
+<p>con la seguente funzione polinomiale:</p>
+
+$y_i$ = $\beta_0$  + $\beta_1 x_1 + \beta_2 x_i^2 +  ... + \beta_d x_i^d + \epsilon_i$
 
 
-```{r cars}
-summary(cars)
-```
+## 2. Struttura dell'algoritmo  
 
-## 2. Struttura dell'algoritmo
-### 2.1 Spline
+### 2.1 Concetto di Spline
+<p> Una Spline è una funzione continua costituita da un insieme di polinomi raccordati tra loro, il cui scopo è interpolare in un intervallo un insieme di punti (detti nodi della spline), in modo tale che la funzione sia continua almeno fino ad un dato ordine di derivate in ogni punto dell'intervallo.</p>
 
+
+### 2.2 Smoothing Splines
+<p>L'obiettivo della regressione è adattare una funzione $f(x)$ ad un set di dati  tale che minimizzi la somma dei quadtrati del residui</p>
+$RSS = \sum_{i=1}^n (y_i - f(x_i))^2$ 
+
+<p>In questo modo però a quale problema sia andrebbe incontro? Si potrebe ottenere un RSS pari a zero scegliendo la funzione $f$ che interpoli perfettamente tutti i puntii $y_i$, ma tale risultato sarebbetroppo soggetto ad overfitting poichè la funzione sarebbe troppo flessibile. Occorre quindi trovare il modo di smussare  la funzione, ridefinendo la funzione $RSS$ nel seguente modo: </p>
+$RSS(f,\lambda) = \sum_{i=1}^n (y_i - f(x_i))^2 + \lambda\int f''(t)^2 dt$ 
+
+<p>La funzione $f$ è definita *smoothing spline*.  </p>  
+<p> La prima parte di $RSS$ definisce una misura di distanza dai dati mentre la seconda parte definisce una penalità che penalizza la variabilità della funzione $f$ </p>
+
+### 2.3
 Descrivere in dettaglio la struttura dell’algoritmo, anche nel caso multidimensionale;
 
 ## 3. Implementazioni
