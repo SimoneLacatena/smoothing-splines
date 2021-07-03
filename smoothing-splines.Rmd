@@ -1,0 +1,31 @@
+---
+title: "Smoothing Splines"
+author: "Vito Simone Lacatena mat.747810"
+date: "3/7/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Introduzione
+
+Parte Introduttiva.
+
+
+```{r cars}
+summary(cars)
+```
+
+## 2. Struttura dell'algoritmo
+### 2.1 Spline
+
+Descrivere in dettaglio la struttura dell’algoritmo, anche nel caso multidimensionale;
+
+## 3. Implementazioni
+Illustrare le principali implementazioni disponibili in R;
+
+
+## 4. Esempio con dati reali
+presentare un esempio realistico in R.
