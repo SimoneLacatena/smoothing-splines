@@ -77,10 +77,12 @@ $$
 aggiungere tre vincoli: la **funzione deve essere continua** ,e  la **derivata prima e seconda dei polinomi a tratti devono essere continue**, in questo modo non solo il polinomio a tratti sarà continuo ma sarà anche smussato. Ad ogni vincolo  il numero di gradi di libertà si riduce di 1 , in questo modo i gradi libertà del polinomio di grado 3 visto prima si riducono a 5.</p>
 
 <p>Quindi in generale, una **spline di ordine** $d$ con nodi $c_j$, $j=1,...,K$ è un polinomio a tratti di ordine $d$ che ha derivate continue sino all' ordine $d-1$, una **spline cubica** è quindi due volte differenziabile nell'intero intervallo. 
-Le **spline cubiche** sono ritenute popolari poichè difficile individuare la discontinuità ai nodi, una spline cubica con $K$ nodi utilizza $K+4$ gradi di libertà. Le Spline di grado superiore ad secondo mostrano un elevata variabilità agli estremi dell'intervallo, una **spline naturale** è una spline con vincoli di linearità agli estremi.</p>
+Le **spline cubiche** sono ritenute popolari poichè difficile individuare la discontinuità ai nodi, una spline cubica con $K$ nodi utilizza $K+4$ gradi di libertà.</p>
+
 
 ### La scelta del numero e della posizione dei nodi
-<p>Un modo per poter definire un posizionamento uniforme dei nodi è quello di speficificare i gradi di libertà desiderati, provando diversi valori, Un metodo più obiettivo consiste nell'utilizzare la cross-validation in cui si effetuano più iterazioni utilizzando una parte dei dati per adattare la spline con un determinato numero K di nodi e i dati non visti rimanenti sono utilizzati per fare la previsioni,si calcola una somma dei quadtrati dei residui complessiva per avere una misura di valutazione.La procedura può essere effettuata più volte per divers valori di K e scegliere il modello che ha fornito un risultato RSS più piccolo.</p>
+<p>Un modo per poter definire un posizionamento uniforme dei nodi è quello di speficificare i gradi di libertà desiderati, provando diversi valori, Un metodo più obiettivo consiste nell'utilizzare la cross-validation in cui si effetuano più iterazioni utilizzando una parte dei dati per adattare la spline con un determinato numero K di nodi e i dati non visti rimanenti sono utilizzati per fare la previsioni,si calcola una somma dei quadtrati dei residui complessiva per avere una misura di valutazione.La procedura può essere effettuata più volte per divers valori di K e scegliere il modello che ha fornito un risultato di RSS più piccolo.</p>
+
 
 ### Basi della Spline
 <p> Una regressione spline può essere rappresentata in termini di basi di funzioni.</p>
@@ -112,19 +114,27 @@ $$
 
 <p>dove in questo caso </p> $h(x,c) = (x-c)^d_+ = (x-c)^d$ se $x > c$ altrimenti $0$.</p>
 
+### Splines Cubiche Naturali
+<p>Le Spline di grado superiore ad secondo mostrano un elevata variabilità agli estremi dell'intervallo, una **spline naturale** è aggiunge un ulteriore vincolo che impone che la funzione sia lineare   agli estremi dei nodi, in questo modo si liberano 4 gradi di libertà.</p>
+<p> Una spline cubica naturale con $K$ nodi può essere rappresentata da K funzioni base</p>
 
+$$
+N_0(x) = 1,N_1(x) = x,...,N_{k+1}(x) =  d_k(x) - d_{K-1}(x)
+$$
+dove 
+$$
+  d_K(x) = \frac{(x-c_k)_+^3 - (x-c_K)_+^3}{c_k - c_K }
+$$
 
+# Smoothing Splines
 
-# Struttura dell'algoritmo  
-
-
-## Smoothing Splines:Panoramica
-<p>L'obiettivo della regressione è adattare una funzione $f(x)$ ad un set di dati  tale che minimizzi la **somma dei quadtrati del residui**</p>
+## Panoramica
+<p> Si consideri il  problema di trovare la funzione $f(x)$  tale che minimizzi la **somma dei quadtrati dei residui** </p>
 $$
 RSS = \sum_{i=1}^n (y_i - f(x_i))^2
 $$ 
 
-<p>In questo modo si potrebbe semplicemente ottenere un RSS pari a zero scegliendo la funzione $f$ che interpoli perfettamente tutti i puntii $y_i$, ma tale risultato sarebbe troppo soggetto ad overfitting poichè la funzione sarebbe troppo flessibile. Occorre quindi trovare il modo di smussare  la funzione, ridefinendo la  $RSS$ nel seguente modo: </p>
+<p>In questo modo si potrebbe  ottenere un RSS pari a zero scegliendo la funzione $f$ che interpoli perfettamente tutti i puntii $y_i$, ma tale curva di regressione risulterebbe troppo flessibile. Occorre quindi trovare il modo di smussare  la funzione, ridefinendo la  $RSS$ nel seguente modo: </p>
 $$
 RSS(f,\lambda) = \sum_{i=1}^n (y_i - f(x_i))^2 + \lambda\int f''(t)^2 dt
 $$
@@ -138,14 +148,26 @@ $$
 * Con valore $\lambda = 0$ i suoi effetti sono nulli e quindi la funzione assumerà un comportamento molto irregolare;
 * con $\lambda = \infty$ la funzione sarà una linea retta che passa il più vicino possibile ai dati.
 
-<p> Quidi grandi valori di $\lambda$ producono curve smussata, mentre piccoli valori di questo parametro producono curve più irregolari. </p>
+<p> Quindi grandi valori di $\lambda$ producono curve smussata, mentre piccoli valori di questo parametro producono curve più irregolari.</p>
 
-<p>Si consideri il vettore n-dimensionale $\hat{f}_\lambda$ contenenti i valori adattati ai dati di training $x_1,...,x_n$, nonchè soluzione di  $RSS(f,\lambda)$ per un determinato valore di $\lambda$. Questo vettore può essere scritto come:<p>
+<p>Si può dimostrare che la funzione $f(x)$ che minimizza la RSS  è una **spline cubica naturale ** avente nodi ad ogni punto $x_1,...,x_n$.
+Essendo una spline cubica naturale è possibile scriverla in questo modo: </p>
+
 $$
-\hat{f}_\lambda = S_{\lambda}y
+f(x) = \sum_{j=1}^N N_j(x) \theta_j
+$$
+<p> Dove $N_j$ è la j-esima base spline cubica naturale, è possibile così riscrivere il criterio di minimizzazione nella seguente forma: </p>
+$$
+RSS(f, \lambda) = (y - N \theta)^T(y -N \theta) + \lambda \theta \Omega_n \theta
+$$
+<p>Dove l'elemento $N_{i,j} = N_j(x_i)$ e $\{\Omega_n\}_{j,k} = \int N_j''(t)N_k''(t)dt$ </p>
+
+<p>Il vettore n-dimensionale $\hat{f}_\lambda$ contenenti i valori adattati ai dati di training $x_1,...,x_n$, nonchè soluzione di  $RSS(f,\lambda)$ per un determinato valore di $\lambda$ può essere quindi calcolato come:</p>
+$$
+\hat{f}_\lambda = N(N^TN + \lambda \Omega_n)^{-1}N^Ty =  S_{\lambda}y
 $$ 
 
-<p>Dove la matrice di dimensione $n \times n$ $S_{\lambda}$ è nota  come **smoother matrix**, e il vettore $y$ e il **vettore di risposta**, il numero dei gradi di libertà corrisponde alla traccia della matrice  $S_{\lambda}$. </p>
+<p>La matrice di dimensione $n \times n$ $S_{\lambda}$ è nota  come **smoother matrix**, e il vettore $y$ e il **vettore di risposta**, il numero dei gradi di libertà corrisponde alla traccia della matrice  $S_{\lambda}$. </p>
 
 $$
 df_\lambda = trace(S_{\lambda})
