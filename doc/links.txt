@@ -1,5 +1,8 @@
 https://datascienceplus.com/cubic-and-smoothing-splines-in-r/
 minimi quadtrati : https://www.edutecnica.it/calcolo/reg/reg.htm
 
-smoothing splines R :
+
+
+
+smoothing splines R:
 http://users.stat.umn.edu/~helwig/notes/smooth-spline-notes.html

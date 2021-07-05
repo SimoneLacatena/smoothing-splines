@@ -10,23 +10,23 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduzione
-Prima di entrare nel cuore dell'algoritmo occorre introdurre dei concetti fondamentali.
+Prima di entrare nel cuore dell'algoritmo occorre introdurre dei concetti fondamentali, partendo dal definire il problema della regressione.
 
 ## Il problema della regressione
-<p>In generale un problema di regressione ha lo scopo di stimare un modello che descriva uan relazione  tra una **variabile di risposta** $Y$ dipendente è un insime di **variabili predittive** indipententi $X_1,...,X_p$.</p>
-<p>Il più semplice modello di regressione è il modello di **regressione lineare** in cui si assume una relazione lineare tra una singola variabile predittiva $X$ e la variabile di risposta, tale funzione lineare viene approssimata come segue: $Y$</p>
+<p>In generale un problema di regressione ha l'obiettivo di stimare un modello che descriva uan relazione  tra una **variabile di risposta** $Y$ dipendente è un insieme di **variabili predittive** indipententi $X_1,...,X_p$.</p>
+<p> Il più semplice modello di regressione è il modello di **regressione lineare** in cui si assume una relazione lineare tra una singola variabile predittiva $X$ e la variabile di risposta, tale funzione lineare viene approssimata come segue: $Y$</p>
 $$
 Y = \beta_0  + \beta_1 X +  \epsilon
 $$
 
-<p>I parametri  $\beta_0$  e $\beta_1$ sono sconosciuti e vanno stimati utilizzando i dati. Per determinare il valore ottimale di questi parametri si può usare il criterio dei **minimi quadtrati**, ovvero scegliere le stime dei parametri $\hat\beta_0$  e $\hat\beta_1$ in modo da  minimizzare la **somma dei residui al quadrato**, definita come :</p>
+<p>I parametri  $\beta_0$  e $\beta_1$ sono sconosciuti e vanno stimati utilizzando i dati. In altri termini occorre determinare le stime $\hat\beta_0$ e $\hat\beta_1$, dove $\hat\beta_0$ è l'intercetta e $\hat\beta_1$ è la pendenza della retta che dovrebbe passare il più vicino possibile alle osservazioni. Per determinare il valore ottimale di questi parametri è possibile utilizzare diversi metodi che misurano la vicinanza delle stime ai valori delle osservazioni, il metodo più comune è il criterio dei **minimi quadtrati**, ovvero scegliere le stime dei parametri $\hat\beta_0$  e $\hat\beta_1$ in modo da  minimizzare la **somma dei residui al quadrato**, definita come :</p>
 $$
 RSS = \sum_{i=1}^N (y_i - \hat y_i)^2 = \sum_{i=1}^N (y_i - (\hat\beta_0 +    \hat\beta_1 x_i ) )^2
 $$
-
+<p> La regressione lineare standard ha limiti in termini di capacità predittiva, dato che necessità dell'assunzione di linearità dei dati, che di solito risulta una assunzione molto debole. Per questo occorre esaminare delle estensioni del semplice modello lineare, ovvero la regressione polinomiale, le funzioni a gradino e le spline.</p>
 
 ## Regressione Polinomiale
-<p> Il modello di regressione polinomiale estende il modello di regressione lineare attraverso l'aggiunta di ulteriori variabili ottenuti dalla variabile origianli elevandoli ad una potenza. Ovvero si estendo il modello lineare classico </p>
+<p> Il modello di regressione polinomiale estende il modello di regressione lineare attraverso l'aggiunta di ulteriori variabili ottenuti dalla variabile originale elevandola ad una potenza. Ovvero si estendo il modello lineare classico </p>
 
 $$
 y_i = \beta_0  + \beta_1 x_i +  \epsilon_i
@@ -37,9 +37,10 @@ $$
 $$
 y_i = \beta_0  + \beta_1 x_1 + \beta_2 x_i^2 +  ... + \beta_d x_i^d + \epsilon_i
 $$
+<p> In questo modo è possibile ottenere curve non lineari, non è consigliabile utilizzare valori trppo grandi di $d$ poichè la curva diventerebbe troppo flessibile,è preferibile utilizzare polinomi di grado 3, o al massimo 4.</p>
 
-## Funzioni  a scalini
-<p> Tali funzioni dividono l'intervallo dei valori in $K$ bins distinti creando un insieme di valori di soglia $c_1 ,c_2, ..., c_k$ nell'intervallo e per ogni bin si va ad adattare una funzione costante, Questo equivale a trasformare una variabile continua in una variabile categorica ordinale, avremo quindi: </p>
+## Funzioni  a gradino
+<p> L'uso di funzioni polinomiale definisce una struttura globale della funzioe non lineare della variabile predittrice $X$, per evitare ciò è possibile utilizzare delle **funzioni a gradino**. Tali funzioni dividono l'intervallo dei valori in $K$ bins distinti creando un insieme di valori di soglia ( detti anche **cutpoints**) $c_1 ,c_2, ..., c_k$ nell'intervallo e per ogni bin si va ad adattare una funzione costante, Questo equivale a trasformare una variabile continua in una variabile categorica ordinale, avremo quindi: </p>
 
 $$
 y_i = \beta_0  + \beta_1 C_1(x_i) + \beta_2 C_2(x_i) +  ... + \beta_k C_k(x_i)  + \epsilon_i
@@ -56,13 +57,13 @@ $$
 y_i = \beta_0  + \beta_1 b_1(x_i) + \beta_2 b_2(x_i) +  ... + \beta_k b_k(x_i)  + \epsilon_i
 $$
 
-<p>dove $b_j(.)$ sono funzioni base:</p>
+<p>dove $b_j(.)$ sono funzioni base, quindi possiamo rivedere i casi precedente come istanze di questo modello,ovvero:</p>
 * regressione polinomiale : $b_j(x_i) = x_i^j$ ;
 * funzioni a scalini  : $b_j(x_i) = C_j(x_i)$ ;
 
 
 ## Splines 
-<p>Invece di adattare un polinomio di grado elevato su l'intero intervallo , l'idea base dell'approccio Spline è quello di utilizzare la regressione polinomiali attratti che comporta l'inserimento di polinomi di grado inferiore su diversi sottointervalli, Esempio se si considerano polinomi di terzo grado e si divide l'intervallo originale X sul punto $c$, avremmo due cubiche con differenti coefficenti:
+<p>Invece di adattare un polinomio di grado elevato su l'intero intervallo , l'idea base dell'approccio Spline è quello di utilizzare la **regressione polinomiale a tratti** che comporta l'inserimento di polinomi di grado inferiore su diversi sottointervalli. Esempio se si considerano polinomi di terzo grado e si divide l'intervallo originale X sul punto $c$, avremmo due cubiche con differenti coefficenti:
 
 ![](./doc/img/cubicsplines.PNG){width=50%}
   
@@ -72,6 +73,14 @@ $$
 **Osservazione**: con $K$ nodi si avranno $K+1$ polinomi.
 
 <p> I **gradi di libertà** per questo esempio sono 8, per gradi di libertà si intende il numero di parametri indipendenti da stimare che vengono utilizzati dal modello, nell'esempio precedente il numero di gradi di libertà è quattro per ogni polinomio (poichè di grado 3), quindi in tutto otto.</p>
+<p> Per avere una curva che non sia troppo flessibile e non appaia discontinua nel passaggio da un intervallo all'altro è importante
+aggiungere tre vincoli: la **funzione deve essere continua** ,e  la **derivata prima e seconda dei polinomi a tratti devono essere continue**, in questo modo non solo il polinomio a tratti sarà continuo ma sarà anche smussato. Ad ogni vincolo  il numero di gradi di libertà si riduce di 1 , in questo modo i gradi libertà del polinomio di grado 3 visto prima si riducono a 5.</p>
+
+<p>Quindi in generale, una **spline di ordine** $d$ con nodi $c_j$, $j=1,...,K$ è un polinomio a tratti di ordine $d$ che ha derivate continue sino all' ordine $d-1$, una **spline cubica** è quindi due volte differenziabile nell'intero intervallo. 
+Le **spline cubiche** sono ritenute popolari poichè difficile individuare la discontinuità ai nodi, una spline cubica con $K$ nodi utilizza $K+4$ gradi di libertà. Le Spline di grado superiore ad secondo mostrano un elevata variabilità agli estremi dell'intervallo, una **spline naturale** è una spline con vincoli di linearità agli estremi.</p>
+
+### La scelta del numero e della posizione dei nodi
+<p>Un modo per poter definire un posizionamento uniforme dei nodi è quello di speficificare i gradi di libertà desiderati, provando diversi valori, Un metodo più obiettivo consiste nell'utilizzare la cross-validation in cui si effetuano più iterazioni utilizzando una parte dei dati per adattare la spline con un determinato numero K di nodi e i dati non visti rimanenti sono utilizzati per fare la previsioni,si calcola una somma dei quadtrati dei residui complessiva per avere una misura di valutazione.La procedura può essere effettuata più volte per divers valori di K e scegliere il modello che ha fornito un risultato RSS più piccolo.</p>
 
 ### Basi della Spline
 <p> Una regressione spline può essere rappresentata in termini di basi di funzioni.</p>
@@ -103,7 +112,7 @@ $$
 
 <p>dove in questo caso </p> $h(x,c) = (x-c)^d_+ = (x-c)^d$ se $x > c$ altrimenti $0$.</p>
 
-<p>Un caso interessante  è quello  delle **spline cubiche**, ritenute popolari poichè difficile individuare la discontinuità ai nodi, una spline cubica con $K$ nodi utilizza $K+4$ gradi di libertà. Le Spline di grado superiore ad secondo mostrano un elevata variabilità agli estremi dell'intervallo, una **spline naturale** è una spline con vincoli di linearità agli estremi.</p>
+
 
 
 # Struttura dell'algoritmo  
@@ -175,9 +184,124 @@ $$
 * Per $\lambda \to \infty$ la soluzione converge al piano dei minimi quadtrati;
 
 
-# Implementazioni
-Illustrare le principali implementazioni disponibili in R;
+# Implementazioni in R
+<p>Il linguaggio di programmazione R trova applicazione in ambiti scientifici e statistici. Sono disponibili due implementazioni della smoothing spline in R, in due paakgage distinti: la funzione **smooth.spline** nel package **stats** e la funzione **ss** nel package **npreg**.</p>
+
+## Funzione smooth.spline
+Gli argomenti in input alla funzione smooth.spline sono i seguenti:
 
 
-# Esempio con dati reali
-presentare un esempio realistico in R.
+| Argomento | Descrizione | 
+| --|-------------|
+| x | Vettore di valori della variabile predittiva| 
+| y | Vettore di valori della variabile di risposta | 
+| w | Vettore di pesi della stessa dimensione di x (opzionale), di default è un vettore di 1|
+|df| Argomento che permette di settare numero dei gradi di libertà desiderati. Più alto è il numero, più ondulata è la curva adattata e più da vicino segue i dati. Dovrebbe essere compreso tra 1 e il numero di punti distinti in x|
+|spar|Parametro di smoothing,se specificato il parametro $\lambda$ dell'integrale della derivata seconda quadrata nel criterio di fitting (log likelihood penalizzato) è una funzione monotona di spar|
+|lambda|Al posto di scar può essere specificato questo parametro di smoothing|
+|cv|Argomento  booleana, se impostato a TRUE viene utilizzata la cross-validation di Tipo Leave-One-Out (LOOCV) altriemnti  se FALSE la Generalized Cross-Validation (GCV). Viene usato per il calcolo dei parametri di smoothing solo quando sia spar che df non sono specificati è  comunque  usatoper determinare cv.crit nel risultato. Impstando questo argoemnto su NA per la velocizzazione si salta la valutazione.|
+|all.knots| Se TRUE utilizza tutii i punti distinti come nodi, se FALSE usa un sottoinsieme di questi punti|
+|nknots|Può essere settato come il numero o un criterio che resituisce il numero di nodi ( funziona solo se all.nots = FALSE)|
+|keep.data|Argomento boolenao che specifica se i dati di input devono essere mantenuti nel risultato. Se TRUE (come per default), i valori montati e i residui sono disponibili dal risultato|
+|df.offset|Permette di aumentare i gradi di libertà di df.offset nel criterio GCV.|
+|penality|Coefficiente della penalità per i gradi di libertà nel criterio GCV.|
+|control.spar|Lista opzionale con i componenti nominati che controllano la ricerca della radice quando il parametro di smoothing spar è calcolato.|
+|tol|Soglia di  tolleranza per l'uguaglianza o l'unicità dei valori x. I valori sono suddivisi in intervalli di dimensione tol e i valori che cadono nello stesso intervallo sono considerati uguali. Deve essere strettamente positivo (e finito)|
+|keep.stuff|Argomento booleano sperimentale che indica se il risultato deve tenere extra dai calcoli interni. Dovrebbe permettere di ricostruire la matrice X e altro.|
+
+
+## Funzione ss
+<p>La funzione $ss$ è inspirata alla funzione $smooth.spline$ del package stats,in aggiunta a $smooth.splin$:</p>
+- Invece dell'argomento cv disponde di $method$ permettendo di scegliere tra otti diversi metodi (GCV, OCV, GACV, ACV, REML, ML, AIC) per selezionare il parametro di smoothing;
+- Permette di definire tre tipi di spline(linear, cubic,quintic);
+- permette di definire un vincolo di periodicità
+- permette di specificare i valori dei nodi
+
+<p>GLi argomenti x,y,w,df,spar,lambda,all.knots,nknots,keep.data,df.offset,penality,control.spar sono gli stessi ritrovati in smooth.spline. Di seguito verranno descritti gli argomenti presenti in $ss$ e non presenti in $smooth.spline$.</p>
+
+| Argomento | Descrizione | 
+| --|-------------|
+| method | Metodo per selezionare il parametro di smoothing. Ignorato se viene fornito spar o lambda.| 
+|m|Il valore predefinito è m = 2, che è una spline di smoothing cubica. Imposta m = 1 per uno spline lineare o m = 3 per uno spline quintico |
+|periodic|Se TRUE, la funzione stimata f(x) è costretta ad essere periodica |
+|knots| Vettore dei valori dei nodi per la spline. I valori dovrebbero essere singoli e all'interno dell'intervallo dei valori x (per evitare un warning).|
+|bernoulli| Se TRUE, vengono utilizzati polinomi di Bernoulli scalati per le funzioni di base e di penalizzazione. Se FALSE, produce la definizione "classica" di una spline di smoothing.|
+
+# Esempio:Heart Failure Clinical Records
+<p>Vediamo ora un esempio pratico utilizzando come riferimento il dataset **Heart Failure Clinical Records**, il dataset contiene 13 feature, che riportano informazioni cliniche, corporee e sullo stile di vita di pazienti tra i 40 e 95 anni di cui 105 donne e 194 uomini . 
+Alcune feature sono binarie: anemia, pressione alta, diabete, sesso e fumo, altre sono di tipo numerico</p>
+
+features :
+
+- **age**: età del paziente (anni)
+- **anaemia**: diminuzione dei globuli rossi o dell'emoglobina (booleano)
+- **high blood pressure**: se il paziente ha l'ipertensione (booleano)
+- **creatinine phosphokinase** (CPK): livello dell'enzima CPK nel sangue (mcg/L)
+- **diabetes**: se il paziente ha il diabete (booleano)
+-  **ejection fraction**: percentuale di sangue che lascia il cuore ad ogni contrazione (percentuale)
+- **platelets**: piastrine nel sangue (kiloplatelets/mL)
+- **sex**: donna o uomo (binario)
+- **serum creatinine**: livello di creatinina sierica nel sangue (mg/dl)
+- **serum sodium**: livello di sodio sierico nel sangue (mEq/L)
+- **smoking**: se il paziente fuma o no (booleano)
+- **time**: periodo di follow-up (giorni)
+- **death event**: se il paziente è deceduto durante il periodo di follow-up (booleano)
+<br>
+```{r}
+
+library(DT)
+data <- read.csv(file = './data/hfcr.csv',sep=',')
+
+
+head(data,5)
+
+```
+<br>
+<p> Considero come variabile predittiva **age**  e come variabile di risposta **platelets**</p>
+```{r}
+
+library(scales)
+xlabel = 'age'
+ylabel = 'platelets'
+x <- data$age
+y <- data$platelets
+plot(x,y,xlab = xlabel,ylab = ylabel,type = "p",col=alpha('darkblue', 0.2),pch =16,cex=0.8)
+```
+
+### Smoothing Spline con smooth.spline
+
+<p> Si osservi che settando il parametro **df** dei gradi di libertà si ottengono i casi estremi di df = n (numero di osservazioni uniche ) e df = 2, si ricorda  che al crescere del valore di $\lambda$ i gradi di libertà diminuiscono.</p>
+
+```{r}
+n = length(unique(x))
+
+spline_A <- smooth.spline(x,y,df = 2)
+spline_B <- smooth.spline(x,y,df = n)
+
+print(spline_A)
+print(spline_B)
+plot(x,y,xlab = xlabel,ylab = ylabel,type = "p",col=alpha('darkblue', 0.2),pch =16,cex=0.8)
+lines(spline_A,lwd=2,col="blue")
+lines(spline_B,lwd=2,col="red")
+legend("bottomright", c(paste("df=2, ",'lambda',"=",format(spline_A$lambda,scientific = TRUE)),paste("df=",n, ",lambda=",format(spline_B$lambda,scientific = TRUE))) ,col=c("blue","red"),lwd=2)
+
+```
+<p> Dal grafico  si può notare infatti che come previsto che con un numero di gradi di libertà di 2 il parametro labmda assume un elevato valore smussando la curva in modo che la smoothing spline è una retta ( curva blu), con un numero di gradi di libertà pari al numero di osservazioni il parametro labda tendo al valore 0 e la curva risulta molto irregolare (curva rossa).</p>
+
+
+<p> Vediamo di adattare la smoothing spline stimando i parametri di $\lambda$ e di $ds$  in modo da ottenere un risultato ottimale.
+Richiamando la funzione smooth.spline non specificando i parametri di smoothing la funzione stimerà tali  parametro automaticamente mediante  una Leave-One Out o una Cross Validation Generalizzata, in questo caso con $cv$ = TRUE verrà utilizza  una cross-validation Leave-One-Out</p>
+```{r message=FALSE,warning=FALSE}
+spline <- smooth.spline(x, y,cv = TRUE)
+spline
+```
+
+```{r}
+plot(x,y,xlab = xlabel,ylab = ylabel,type = "p",col=alpha('darkblue', 0.2),pch =16,cex=0.8)
+
+lines(spline,lwd=2,col="darkblue")
+legend("bottomright",paste("df=",spline$df ,'lambda',"=",format(spline$lambda,scientific = TRUE)),col="darkblue",lwd=2)
+```
+
+
+
