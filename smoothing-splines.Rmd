@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduzione
-Prima di discutere della struttura dell'algoritmo occorre introdurre dei concetti fondamentali, partendo dal definire il problema della regressione.
+Prima di discutere della struttura dell'algoritmo di smoothing splines, occorre introdurre dei concetti e strumenti fondamentali utili alla discussione del metodo, partendo dal definire il problema della regressione.
 
 ## Il problema della regressione
 <p>In generale un problema di regressione ha l'obiettivo di stimare un modello che descriva uan relazione  tra una **variabile di risposta** $Y$  è un insieme di **variabili predittive**  $X_1,...,X_p$.</p>
@@ -63,8 +63,9 @@ $$
 
 </center>
 ## Funzioni  a gradino
-<p> L'uso di funzioni polinomiali definisce una struttura globale della funzioe non lineare della variabile predittrice $X$, per superare questo limite  è possibile utilizzare delle **funzioni a gradino**.</p>
-<p>Tali funzioni dividono l'intervallo dei valori in $K$ bins distinti creando un insieme di valori di soglia ( detti anche **cutpoints**) $c_1 ,c_2, ..., c_k$ e per ogni bin si va ad adattare una funzione costante, Questo equivale a trasformare una variabile continua in una variabile categorica ordinale, avremo quindi: </p>
+<p> Il limite delle funzioni polinomiali è data dalla loro natura globale: determinare dei coefficienti per ottenere una forma funzionale in una regione può far sì che la funzione assumna una forma troppo irregolare in regioni distanti</p>
+<p> Un modo per superare questo limite  è quello di  utilizzare delle **funzioni a gradino**.</p>
+<p>Tali funzioni dividono l'intervallo dei valori in $K$ bins distinti creando un insieme di valori di soglia ( detti anche **cutpoints**) $c_1 ,c_2, ..., c_k$ e per ogni bin si va ad adattare una funzione costante, avremo quindi una funzione costante a tratti: </p>
 
 $$
 y_i = \beta_0  + \beta_1 C_1(x_i) + \beta_2 C_2(x_i) +  ... + \beta_k C_k(x_i)  + \epsilon_i
@@ -86,8 +87,10 @@ $$
 * funzioni a scalini  : $b_j(x_i) = C_j(x_i)$ ;
 
 
-## Splines 
-<p>Invece di adattare un polinomio di grado elevato su l'intero intervallo, l'idea base dell'approccio Spline è quello di utilizzare la **regressione polinomiale a tratti** che comporta la divisione dell'intervallo dei valori della variabile predittrice $X$ in sottointervalli e l'inserimento di polinomi di grado inferiore sui diversi sottointervalli.</p>
+Le  **espansioni di base** permettono di  ottenere rappresentazioni più flessibili per f(X).
+
+## Funzioni Polinomiali a Tratti e Splines 
+<p>Invece di adattare un polinomio di grado elevato su l'intero intervallo dei valori della variabile predittrice $X$ ,si potrebbe pensare di utilizzare una  funzione polinomiale a tratti, dividendo il dominio di X in intervalli contigui e rappresentando f con un polinomio di grado inferiore separato in ogni intervallo, tale approccio è chiamato  **regressione polinomiale a tratti**.</p>
 <p>**Esempio**: Se si considerano polinomi di terzo grado e si divide l'intervallo originale X sul punto $c$, avremmo due cubiche con differenti coefficenti:
 
 ![](./doc/img/cubicsplines.PNG){width=50%}
@@ -98,10 +101,24 @@ $$
 **Osservazione**: con $K$ nodi si avranno $K+1$ polinomi.
 
 <p> I **gradi di libertà** per questo esempio sono 8, per gradi di libertà si intende il numero di parametri liberi (come il numero dei coefficenti in una funzione polinomiale), nell'esempio precedente il numero di gradi di libertà è quattro per ogni polinomio (poichè di grado 3), quindi in tutto otto.</p>
-<p> Per avere una curva che non sia troppo flessibile e non appaia discontinua nel passaggio da un intervallo all'altro è importante
-aggiungere tre vincoli: la **funzione deve essere continua** ,e  la **derivata prima e seconda dei polinomi a tratti devono essere continue**, in questo modo non solo il polinomio a tratti sarà continuo ma sarà anche smussato. Ad ogni vincolo  il numero di gradi di libertà si riduce di 1 , in questo modo i gradi libertà del polinomio di grado 3 visto prima si riducono a 5. In generale una spline cubica con $K$ nodi utilizza $K+4$ gradi di libertà.</p>
 
-<p>Quindi, una **spline di ordine** $d$ con nodi $c_j$, $j=1,...,K$ è un polinomio a tratti di ordine $d$ che ha derivate continue sino all' ordine $d-1$. Una spline cubica è in questo modo due volte differenziabile nell'intero intervallo, questo tipo di spline sono le più utilizzate poichè risulta  difficile individuare la discontinuità ai nodi.
+### Vincoli di continuità
+
+<center>
+
+  ![Differenze con diversi livelli di continuità](./doc/img/disc){width=50%}
+
+</center>
+
+<br>
+<p> Per avere una curva che non sia troppo flessibile e non appaia discontinua nel passaggio da un intervallo all'altro è importante
+aggiungere tre vincoli: la **funzione deve essere continua** ,e  la **derivata prima e seconda dei polinomi a tratti devono essere continue**, in questo modo non solo il polinomio a tratti sarà continuo ma sarà anche smussato (Figura 3). Ad ogni vincolo  il numero di gradi di libertà si riduce di 1 , in questo modo i gradi libertà del polinomio di grado 3 visto prima si riducono a 5.</p>
+
+
+### Spline
+<p>Una **spline di ordine** $d$ con nodi $c_j$, $j=1,...,K$ è un polinomio a tratti di ordine $d$ avente derivate continue sino all' ordine $d-1$.</p>
+
+<p>Le spline più utilizzate sono le **spline cubiche**,  con $K$ nodi utilizzano $K+4$ gradi di libertà e sono due volte differenziabile nell'intero intervallo. Questo tipo di spline sono popolari perchè risulta  difficile all'occhio umano individuare una  discontinuità ai nodi.</p>
 
 ### Basi della Spline
 <p> Una regressione spline può essere rappresentata in termini di basi di funzioni.</p>
@@ -153,7 +170,7 @@ $$
 # Smoothing Splines
 
 ## Panoramica
-<p> Si consideri il  problema di trovare la funzione $f(x)$  tale che minimizzi la **somma dei quadtrati dei residui** </p>
+<p> Si consideri il  problema di trovare la funzione $f(x)$  tale che minimizzi la **somma dei quadrati dei residui** </p>
 $$
 RSS = \sum_{i=1}^n (y_i - f(x_i))^2
 $$ 
@@ -174,8 +191,8 @@ $$
 
 <p> Quindi grandi valori di $\lambda$ producono curve smussata, mentre piccoli valori di questo parametro producono curve più irregolari.</p>
 
-<p> Le smoothing splines sono una tecnica molto utilizzata nella **regressione non parametrica**, dove a differenza dei metodi parametrici non si fa alcuna assunzione sulla forma di $f$ ma si cerca una stima di questa funzione sconosciuta che si avvicini il più possibile alle osservazioni senza risultare troppo approssimativa o  irregolare. </p>
-<p>La funzione $f(x)$ che minimizza la RSS sulla classe di tutte le funzioni differenziabili due volte nell'intervallo di valori X è una **spline cubica naturale ** avente nodi ad ogni punto $x_1,...,x_n$.
+<p> Le smoothing splines sono una tecnica molto utilizzata nella **regressione non parametrica**, dove a differenza dei metodi parametrici non si fa alcuna assunzione sulla forma di $f$ ma si cerca una stima di questa funzione sconosciuta che si avvicini il più possibile alle osservazioni senza risultare  ne troppo approssimativa ne, nel caso opposto, troppo irregolare. </p>
+<p>La funzione $f(x)$ che **minimizza la RSS** è una **spline cubica naturale ** avente nodi ad ogni punto $x_1,...,x_n$.
 Essendo una spline cubica naturale è possibile scriverla in questo modo: </p>
 
 $$
@@ -190,21 +207,49 @@ $$
 
 <p>Il vettore n-dimensionale $\hat{f}_\lambda$ contenenti i valori adattati ai dati di training $x_1,...,x_n$, nonchè soluzione di  $RSS(f,\lambda)$ per un determinato valore di $\lambda$ può essere quindi calcolato come:</p>
 $$
-\hat{f}_\lambda = N(N^TN + \lambda \Omega_n)^{-1}N^Ty =  S_{\lambda}y
+\hat{f}_\lambda = N(N^TN + \lambda \Omega_n)^{-1}N^Ty
 $$ 
+Imponendo:
+$$
+ S_{\lambda} =  N(N^TN + \lambda \Omega_n)^{-1}N^T
+$$
+Si ha che: 
 
-<p>La matrice di dimensione $n \times n$ $S_{\lambda}$ è nota  come **matrice di smooothing**.</p>
+$$
+\hat{f}_\lambda = S_{\lambda}y
+$$
+
+
+<p>La matrice di dimensione $N \times N$ $S_{\lambda}$ è nota  come **matrice di smooothing**.</p>
 <p> **Proprietà della Matrice edi Smoothing:**</p>
 * é una matrice $N \times N$ simmetrica di rango $N$
 * è semi-definitia positiva ,ovvero $\forall x \neq 0$  $xS_\lambda x \ge 0$
 
 
 <p>Occorre notare che all'aumentare del valore di $\lambda$ da 0 a $\infty$ il numero di gradi di libertà descresce da $n$ a 2, il parametro di regolarizzazione $\lambda$ controlla l'rregolarità della spline e quindi anche i gradi di libertà effettivi.</p>
-<p>La somma degli elementi diagonali della Smoothing Matrix rappresenta il numero dei gradi di libertà. </p>
 
+
+
+<p> Dato che $S_\lambda$ è simmetrica e semidefinita postiva ammette una **eigendecomposition**.</p>
+
+<p> Assumendo che N sia invertibile( ovvero esiste una matrice $N^{-1}$ tale che il prodotto matriciale tra le due restituisce la matrice identità). La matrixe di smoothing può essere riscritta nel seguente modo:</p>
+<p>$S_\lambda = N(N^T N + \lambda \Omega_N)^{-1} N^T$ </p>
+<p>$=N(N^T N + \lambda (N^T N^{-T}) \Omega_N (N^{-1} N))^{-1} N^T$</p>
+<p>$=N [N^T (N + \lambda N^{-T}) \Omega_N (N^{-1}) N]^{-1} N^T$</p>
+<p>$=N N^{-1} (I + \lambda N^{-T} \Omega_N N^{-1})^{-1}N^{-T}N^T$</p>
+<p>$=( I + \lambda K)^{-1}$</p>
+
+
+Dove $K = N^{-T} \Omega_N N^{-1}$ è una **matrice di penalità**.
+
+La decomposizione della  matrice  in termini dei suoi autovalori e autovettori è quindi la seguente:
 $$
-df_\lambda = trace(S_{\lambda})
+S_\lambda = \sum_{k=1}^N \frac{u_k u_k^T}{1 + \lambda d_k}
 $$
+<p>Dove $d_k$ è il corrispondente autovalore di $K$.</p>
+
+<p>La somma degli elementi diagonali della matrice di smoothing corrisponde al numero dei gradi di libertà della smoothing spline.</p>
+$df_\lambda = trace(S_{\lambda})$
 
 
 
@@ -225,7 +270,7 @@ $$
 RSS_{CV}(\hat{f}_\lambda) = \frac{1}{N}\sum_{i=1}^N (\frac{y_i -\hat{f}_\lambda(x_i)}{1 - S_\lambda ii})^2
 $$
 
-In questa formula $\hat{f}_\lambda$ indica la funzione smoothing spline adattata su tutti i dati di training tranne $x_i$  e $S_\lambda ii$ l'elemento diagonale i-esimo della matrice $S_\lambda$.
+In questa formula $\hat{f}_\lambda$ indica la funzione smoothing spline adattata su tutti i dati di training tranne che su $x_i$  e $\{S_\lambda\}ii$ l'elemento diagonale i-esimo della matrice $S_\lambda$.
 
 <p> Dal momento  che $df_\lambda = trace(S_{\lambda})$ è monotona in $\lambda$ è possibile inverire la relazione e ricavare $\lambda$ dai gradi di libertà.</p>
 
