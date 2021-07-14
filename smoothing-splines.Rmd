@@ -271,7 +271,7 @@ $$
 
 
 
-## 2.3 Selezione Automatica dei parametri di Smoothing
+## 2.3 Selezione automatica dei parametri di smoothing
 <p>In generale i parametri di smoothing da stimare per la regressione spline  sono:</p>
 * il grado delle spline;
 * il numero e la posizione dei nodi.
@@ -302,6 +302,13 @@ $$
 
 <p>Questa formula  afferma  che è possibile calcolare in modo rapido ciascuno degli **adattameti leave one out** utilizzando solo la funzione adattata a tutte le osservazioni.</p>
 
+
+<p>La LOOCV  può essere interpretata come una somma dei residui quadtrati *pesata*  dove i pesi hanno della forma $w_i = \frac{1}{(1 - \{S_\lambda\}_{ii})^2}$, dato che $\{S_\lambda\}_{ii}$ è diverso per ogni osservazione, il criterio da un peso diverso ad ogni osservazione.
+Un miglioramento della LOOCV è la Generalized Cross-Validation (GCV) che permette di equilibrare il peso delle diverse osservazioni, questo criterio trova il valore di $\lambda$ che miniminzza</p>
+
+$$
+GCV(\lambda) = \frac{\frac{1}{n} \sum_ {i=1}^n (y_i - \hat{f}_\lambda(x_i))^2}{(1 - trace(S_\lambda)/n)^2}
+$$
 
 
 ## 2.4 Compromesso Bias-Varianza
