@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # 1. Introduzione
-Prima di discutere della struttura dell'algoritmo di smoothing splines, occorre introdurre dei concetti e strumenti fondamentali utili alla discussione del metodo, partendo dal definire il problema della regressione.
+Prima di discutere della struttura dell'algoritmo di smoothing splines, occorre introdurre dei concetti utili alla discussione del metodo, partendo dal definire il problema della regressione.
 
 ## 1.1 Il problema della regressione
 <p>In generale un problema di regressione ha l'obiettivo di stimare un modello che descriva uan relazione  tra una **variabile di risposta** $Y$  è un insieme di **variabili predittive**  $X_1,...,X_p$.</p>
@@ -21,7 +21,8 @@ $$
 Y = \beta_0  + \beta_1 X +  \epsilon
 $$
 
-<p>I parametri  $\beta_0$  e $\beta_1$ sono sconosciuti e vanno stimati utilizzando i dati. In altri termini occorre determinare le stime $\hat\beta_0$ e $\hat\beta_1$, dove $\hat\beta_0$ è l'intercetta e $\hat\beta_1$ è la pendenza della retta che dovrebbe passare il più vicino possibile alle osservazioni(Figura 1).</p>
+<p>I parametri  $\beta_0$  e $\beta_1$ sono sconosciuti e vanno stimati utilizzando i dati, il termine $\epsilon$ è un termine di errore con media 0.</p>
+<p>L'obiettivo è determinare le stime $\hat\beta_0$ e $\hat\beta_1$, dove $\hat\beta_0$ è l'intercetta e $\hat\beta_1$ è la pendenza della retta che dovrebbe passare il più vicino possibile alle osservazioni(Figura 1).</p>
 <p>Per determinare il valore ottimale di questi parametri è possibile utilizzare diversi metodi,  il più comune è il criterio dei **minimi quadtrati**, ovvero scegliere le stime dei parametri $\hat\beta_0$  e $\hat\beta_1$ in modo da  minimizzare la **somma dei residui al quadrato**  definita come :</p>
 $$
 RSS = \sum_{i=1}^N (y_i - \hat y_i)^2 = \sum_{i=1}^N (y_i - (\hat\beta_0 +    \hat\beta_1 x_i ) )^2
@@ -222,7 +223,7 @@ $$
 $$
 \hat{f}_\lambda = N(N^TN + \lambda \Omega_n)^{-1}N^Ty
 $$ 
-Imponendo:
+definendo:
 $$
  S_{\lambda} =  N(N^TN + \lambda \Omega_n)^{-1}N^T
 $$
@@ -303,7 +304,7 @@ $$
 <p>Questa formula  afferma  che è possibile calcolare in modo rapido ciascuno degli **adattameti leave one out** utilizzando solo la funzione adattata a tutte le osservazioni.</p>
 
 
-<p>La LOOCV  può essere interpretata come una somma dei residui quadtrati *pesata*  dove i pesi hanno della forma $w_i = \frac{1}{(1 - \{S_\lambda\}_{ii})^2}$, dato che $\{S_\lambda\}_{ii}$ è diverso per ogni osservazione, il criterio da un peso diverso ad ogni osservazione.
+<p>La LOOCV  può essere interpretata come una somma dei residui quadtrati *pesata* con $w_i = \frac{1}{(1 - \{S_\lambda\}_{ii})^2}$, dato che $\{S_\lambda\}_{ii}$ è diverso per ogni osservazione, il criterio da un peso diverso ad ogni osservazione.
 Un miglioramento della LOOCV è la Generalized Cross-Validation (GCV) che permette di equilibrare il peso delle diverse osservazioni, questo criterio trova il valore di $\lambda$ che miniminzza</p>
 
 $$
