@@ -1,5 +1,6 @@
 ---
 title: "Smoothing Splines"
+subtitle: "Modellazione Statistica"
 author: "Vito Simone Lacatena 747810"
 output: pdf_document
 ---
@@ -12,7 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 Prima di discutere della struttura dell'algoritmo di smoothing splines, occorre introdurre dei concetti utili alla discussione del metodo, partendo dal definire il problema della regressione.
 
 ## 1.1 Il problema della regressione
-<p>In generale un problema di regressione ha l'obiettivo di stimare un modello che descriva uan relazione  tra una **variabile di risposta** $Y$  è un insieme di **variabili predittive**  $X_1,...,X_p$.</p>
+<p>La regressione è un approccio di apprendimento supervisionato in cui si ha l'obiettivo di prevedere il valore di una **variabile di risposta** $Y$, dato un insieme di **variabili predittive** $X_1,...,X_p$. Questo viene fatto stimando una funzione ignota $f$ con una funzione $\hat{f}$. Questo obbiettivo può essere raggiunto attraverso: </p> 
+* **metodi parametrici**: In cui si fanno assunzioni sulla forma della funzione $f$ (ad esempio l'assunzione di linearità) e successivamete si stimano i parametri;
+* **metodi non parametrici**: non si fanno assunzioni su una particolare forma della funzione $f$ ma si cerca una stima che si avvicini il più possibile alle osservazioni senza risultare troppo irregolare, tale approccio necessita di un numero elevato di esempi per poter ottenere una buona stima.
+
 
 
 ## 1.2 Regressione Lineare
@@ -21,15 +25,15 @@ $$
 Y = \beta_0  + \beta_1 X +  \epsilon
 $$
 
-<p>I parametri  $\beta_0$  e $\beta_1$ sono sconosciuti e vanno stimati utilizzando i dati, il termine $\epsilon$ è un termine di errore con media 0.</p>
-<p>L'obiettivo è determinare le stime $\hat\beta_0$ e $\hat\beta_1$, dove $\hat\beta_0$ è l'intercetta e $\hat\beta_1$ è la pendenza della retta che dovrebbe passare il più vicino possibile alle osservazioni(Figura 1).</p>
-<p>Per determinare il valore ottimale di questi parametri è possibile utilizzare diversi metodi,  il più comune è il criterio dei **minimi quadtrati**, ovvero scegliere le stime dei parametri $\hat\beta_0$  e $\hat\beta_1$ in modo da  minimizzare la **somma dei residui al quadrato**  definita come :</p>
+<p>I parametri $\beta_0$  e $\beta_1$ sono sconosciuti e vanno stimati utilizzando i dati, il termine $\epsilon$ è un termine di errore con media 0.</p>
+<p>L'obiettivo è determinare le stime $\hat\beta_0$ e $\hat\beta_1$, dove $\hat\beta_0$ è l'intercetta e $\hat\beta_1$ è la pendenza della retta che dovrebbe passare il più vicino possibile alle osservazioni (Figura 1).</p>
+<p>Per determinare il valore ottimale di questi parametri è possibile utilizzare diversi metodi,  il più comune è il criterio dei **minimi quadrati**, ovvero scegliere le stime dei parametri $\hat\beta_0$  e $\hat\beta_1$ in modo da  minimizzare la **somma dei residui al quadrato**  definita come :</p>
 $$
 RSS = \sum_{i=1}^N (y_i - \hat y_i)^2 = \sum_{i=1}^N (y_i - (\hat\beta_0 +    \hat\beta_1 x_i ) )^2
 $$
 
 
-<p> La regressione lineare standard ha dei *limiti in termini di capacità predittiva*, dato che necessita dell'assunzione di linearità, e se la vera funzione  non risulta lineare i risultati ottenuti saranno molto distanti da quelli reali, poichè il presupposto di linearità è molto spesso un approssimazione scarsa del problema reale. </p>
+<p> La regressione lineare standard ha dei *limiti in termini di capacità predittiva*, dato che necessita dell'assunzione di linearità, e se la vera funzione non risulta lineare i risultati ottenuti saranno molto distanti da quelli reali, poiché il presupposto di linearità è molto spesso un’approssimazione scarsa del problema reale. </p>
 
 
 
@@ -44,7 +48,7 @@ $$
 
 
 ## 1.3 Regressione Polinomiale
-<p> Il modello di regressione polinomiale estende il modello di regressione lineare attraverso l'aggiunta di ulteriori predittori ottenuti ciascuna delle variabili originali ad una potenza.</p>
+<p> Il modello di regressione polinomiale estende il modello di regressione lineare attraverso l'aggiunta di ulteriori predittori ottenuti ciascuna delle variabili originali ad una potenza. </p>
 <p>Formalmente, dato il modello lineare classico: </p>
 
 $$
@@ -57,7 +61,7 @@ $$
 $$
 y_i = \beta_0  + \beta_1 x_1 + \beta_2 x_i^2 +  ... + \beta_d x_i^d + \epsilon_i
 $$
-<p> In questo modo è possibile ottenere curve non lineari. Non è tuttavia consigliabile utilizzare polinomi di grado troppo elevato poichè la curva diventerebbe troppo flessibile, nella maggior parte delle applicazioni è infatti suggeribile non andare oltre al grado 3 o 4.</p>
+<p> In questo modo è possibile ottenere curve non lineari. Non è tuttavia consigliabile utilizzare polinomi di grado troppo elevato poiché la curva diventerebbe troppo flessibile, nella maggior parte delle applicazioni è infatti suggeribile non andare oltre al grado 3 o 4.</p>
 
 
 <center>
@@ -65,10 +69,10 @@ $$
 ![Regressione Polinomiale](./doc/img/poly-regression.png){width=40%}
 
 </center>
-## 1.4 Funzioni  a gradino
-<p>In alcune applicazioni, anche la regressione polinomiale può essere considerata  limitata, tale limite  è dato dalla loro natura globale: *determinare dei coefficienti per ottenere una specifica  forma funzionale in una regione può far sì che la funzione assuma una forma troppo irregolare in regioni distanti*.</p>
-<p> Un modo per superare questo limite  è quello di  utilizzare delle **funzioni a gradino**.</p>
-<p>Tali funzioni dividono l'intervallo dei valori in $K$ bins distinti creando un insieme di valori di soglia ( detti anche **cutpoints**) $c_1 ,c_2, ..., c_k$ e per ogni bin si va ad adattare una funzione costante, avremo quindi una funzione costante a tratti: </p>
+## 1.4 Funzioni a gradino
+<p>In alcune applicazioni, anche la regressione polinomiale può essere considerata limitata, tale limite è dato dalla loro natura globale: *determinare dei coefficienti per ottenere una specifica forma funzionale in una regione può far sì che la funzione assuma una forma troppo irregolare in regioni distanti*.</p>
+<p> Un modo per superare questo limite è quello di utilizzare delle **funzioni a gradino**.</p>
+<p>Tali funzioni dividono l'intervallo dei valori in $K$ bins distinti creando un insieme di valori di soglia (detti anche **cutpoints**) $c_1 ,c_2, ..., c_k$ e per ogni bin si va ad adattare una funzione costante, avremo quindi una funzione costante a tratti: </p>
 
 $$
 y_i = \beta_0  + \beta_1 C_1(x_i) + \beta_2 C_2(x_i) +  ... + \beta_k C_k(x_i)  + \epsilon_i
@@ -85,27 +89,27 @@ $$
 y_i = \beta_0  + \beta_1 b_1(x_i) + \beta_2 b_2(x_i) +  ... + \beta_k b_k(x_i)  + \epsilon_i
 $$
 
-<p>dove $b_j(.)$ sono funzioni base scelte in anticipo.</p>
+<p>dove $b_j(.)$ sono funzioni base scelte in anticipo. </p>
 <p>Questo significa che è possibile rivedere i casi precedenti come istanze di questo generico modello, ovvero:</p>
-* regressione polinomiale : $b_j(x_i) = x_i^j$ ;
-* funzioni a scalini  : $b_j(x_i) = C_j(x_i)$ ;
+* regressione polinomiale: $b_j(x_i) = x_i^j$ ;
+* funzioni a scalini : $b_j(x_i) = C_j(x_i)$ ;
 
 
-## 1.6  Regressione polinomiale a tratti e Spline 
-<p><p>Esiste una classe  di funzioni base che estende l' approccio che di regressione polinomiale e la regressione constante a tratti.</p>
+## 1.6 Regressione polinomiale a tratti e Spline 
+<p><p>Esiste una classe di funzioni base che estende l' approccio che di regressione polinomiale e la regressione constante a tratti.</p>
 
 <p>**Idea**: Invece di adattare un polinomio di grado elevato su l'intero intervallo dei valori della variabile predittrice $X$ ,si potrebbe pensare di utilizzare una  funzione polinomiale a tratti, dividendo il dominio di X in intervalli contigui e rappresentando f con un polinomio di grado inferiore separato in ogni intervallo.</p>
-<p>Tale approccio è chiamato  **regressione polinomiale a tratti**.</p>
-<p>**Esempio**: Se si considerano polinomi di terzo grado e si divide l'intervallo originale X sul punto $c$, avremmo due cubiche con differenti coefficenti:
+<p>Tale approccio è chiamato **regressione polinomiale a tratti**.</p>
+<p>**Esempio**: Se si considerano polinomi di terzo grado e si divide l'intervallo originale X sul punto $c$, avremmo due cubiche con differenti coefficienti:
 
 ![](./doc/img/cubicsplines.PNG){width=50%}
   
-<p>In questo caso si adatterano due diversi polinomi con i propri coefficenti, il punto $c$ dell'intervallo in cui si passa da un polinomio ad un altro è chiamatato **nodo** ( o **knot** ).</p>
+<p>In questo caso si adatteranno due diversi polinomi con i propri coefficienti, il punto $c$ dell'intervallo in cui si passa da un polinomio ad un altro è chiamato **nodo** ( o **knot** ).</p>
 
 
 **Osservazione**: con $K$ nodi si avranno $K+1$ polinomi.
 
-<p> I **gradi di libertà** per questo esempio sono 8, per gradi di libertà si intende il numero di parametri liberi (come il numero dei coefficenti in una funzione polinomiale), nell'esempio precedente il numero di gradi di libertà è quattro per ogni polinomio (poichè di grado 3), quindi in tutto otto.</p>
+<p> I **gradi di libertà** per questo esempio sono 8, per gradi di libertà si intende il numero di parametri liberi (come il numero dei coefficienti in una funzione polinomiale), nell'esempio precedente il numero di gradi di libertà è quattro per ogni polinomio (poiché di grado 3), quindi in tutto otto.</p>
 
 ### 1.6.1 Vincoli di continuità
 
@@ -118,7 +122,7 @@ $$
 <br>
 <p> Per avere una curva che non sia troppo flessibile e non appaia discontinua nel passaggio da un intervallo all'altro è importante
 aggiungere tre vincoli: la **funzione deve essere continua** e  la **derivata prima e seconda dei polinomi a tratti devono essere continue**, in questo modo non solo il polinomio a tratti sarà continuo ma sarà anche smussato (Figura 3).</p>
-<p>Ad ogni vincolo  il numero di gradi di libertà si riduce di 1, in questo modo i gradi libertà del polinomio di grado 3 visto prima si riducono a 5.</p>
+<p>Ad ogni vincolo il numero di gradi di libertà si riduce di 1, in questo modo i gradi libertà del polinomio di grado 3 visto prima si riducono a 5.</p>
 
 
 ### 1.6.2 Spline
@@ -127,8 +131,8 @@ aggiungere tre vincoli: la **funzione deve essere continua** e  la **derivata pr
 <p>Le spline più utilizzate sono le **spline cubiche**,  con $K$ nodi utilizzano $K+4$ gradi di libertà e sono due volte differenziabile nell'intero intervallo X. Questo tipo di spline sono popolari perchè risulta  difficile all'occhio umano individuare una  discontinuità ai nodi.</p>
 
 ### 1.6.3 Basi della Spline
-<p> Una regressione spline può essere rappresentata in termini di basi di funzioni.</p>
-<p>**Caso semplice:** regressione spline lineare con grado $d = 1$ e $K = 1$ nodi</p>
+<p> Una regressione spline può essere rappresentata in termini di funzioni basi, come le **funzioni base a potenza troncate**.</p>
+<p>**Caso semplice: ** regressione spline lineare con grado $d = 1$ e $K = 1$ nodi</p>
 
 $$
 y_i = \beta_0  + \beta_1 b_1(x_i) +  \beta_2 b_2(x_i)  + \epsilon_i
@@ -156,44 +160,46 @@ $$
 
 <p>dove in questo caso </p> $h(x,c) = (x-c)^d_+ = (x-c)^d$ se $x > c$ altrimenti $0$.</p>
 
+
+
 ### 1.6.4 Splines cubiche naturali
-<p> Le Spline di grado superiore ad secondo mostrano un elevata variabilità agli estremi dell'intervallo.</p>
+<p> Le Spline di grado superiore ad secondo mostrano un elevata variabilità agli estremi dell’intervallo. </p>
 <p>Le  **spline naturale** risolvono questo problema, e permettono di produrre stime più stabili agli estremi dell' intervallo, aggiungendo un ulteriore vincolo che impone che la funzione sia lineare agli estremi dei nodi, con l' aggiunta di questo  vincolo  si liberano in tutto 4 gradi di libertà.</p>
 
 ### 1.6.5 La scelta del numero e della posizione dei nodi
-<p>Un metodo  obiettivo per determinare il numero e la posizione dei nodi consiste nell'utilizzare la cross-validation in cui si effetuano più iterazioni utilizzando una parte dei dati per adattare la spline con un determinato numero K di nodi e i dati non visti rimanenti sono utilizzati per fare la previsioni,si calcola una somma dei quadtrati dei residui complessiva per avere una misura di valutazione. La procedura può essere effettuata più volte per divers valori di K e scegliere il modello che ha fornito un risultato di RSS più piccolo.</p>
+<p>Un metodo obiettivo per determinare il numero e la posizione dei nodi consiste nell'utilizzare la cross-validation in cui si effettuano più iterazioni utilizzando una parte dei dati per adattare la spline con un determinato numero K di nodi e i dati non visti rimanenti sono utilizzati per fare la previsioni, si calcola una somma dei quadrati dei residui complessiva per avere una misura di valutazione. La procedura può essere effettuata più volte per diversi valori di K e scegliere il modello che ha fornito un risultato di RSS più piccolo.</p>
 
 ### 1.6.6 Vantaggi rispetto alla regressione polinomiale
-<p>Le spline di regressione permettono di ottenere risultati superiori rispetto a quelli della regressione polinomiale, perchè a differenza dei polinomi che per produrre una curva flessibile deve utilizzare un alto grado, le spline ottengono flessibilità aumentatno il numero dei nodi ma mantenendo un grado basso, producendo in questo modo stime più stabili permettendo di posizionare più nodi(quindi più flessibilità) in regioni in cui la funzione da stimare tende a cambiare rapidamente e meno nodi in regioni in cui la funzioni è più stabile.</p>
+<p>Le spline di regressione permettono di ottenere risultati superiori rispetto a quelli della regressione polinomiale, perchè a differenza dei polinomi che per produrre una curva flessibile deve utilizzare un alto grado, le spline ottengono flessibilità aumentando il numero dei nodi ma mantenendo un grado basso, producendo in questo modo stime più stabili permettendo di posizionare più nodi(quindi più flessibilità) in regioni in cui la funzione da stimare tende a cambiare rapidamente e meno nodi in regioni in cui la funzioni è più stabile.</p>
 
 # 2. Smoothing Splines
 
 ## 2.1 Panoramica
-<p> Si consideri il  problema di trovare la funzione $f(x)$  tale che minimizzi la **somma dei quadrati dei residui** </p>
+<p> Si consideri il problema di trovare la funzione $f(x)$  tale che minimizzi la **somma dei quadrati dei residui** </p>
 $$
 RSS = \sum_{i=1}^n (y_i - f(x_i))^2
 $$ 
 
-<p>In assenza di alcun vincolo si potrebbe  ottenere un RSS pari a zero scegliendo la funzione $f$ che interpoli perfettamente tutti i puntii $y_i$, tuttavia la curva di regressione risulterebbe troppo flessibile.</p>
+<p>In assenza di alcun vincolo si potrebbe ottenere un RSS pari a zero scegliendo la funzione $f$ che interpoli perfettamente tutti i puntii $y_i$, tuttavia la curva di regressione risulterebbe troppo flessibile. </p>
 <p>Occorre quindi e il modo di smussare la funzione, modificando la $RSS$ da minimizzare nella seguente forma: </p>
 $$
 RSS(f,\lambda) = \sum_{i=1}^n (y_i - f(x_i))^2 + \lambda\int f''(t)^2 dt
 $$
 
 <p>La funzione $f$ è definita **smoothing spline**. </p> 
-<p> Le smoothing splines sono una tecnica molto utilizzata nella **regressione non parametrica**, dove a differenza dei metodi parametrici non si fa alcuna assunzione sulla forma di $f$ ma si cerca una stima di questa funzione sconosciuta che si avvicini il più possibile alle osservazioni senza risultare  ne troppo approssimativa ne, nel caso opposto, troppo irregolare. </p>
+<p> L'approccio smoothing splines è una tecnica molto utilizzata di **regressione non parametrica**, dato che non si fa alcuna assunzione sulla forma di $f$ ma si cerca una stima di una funzione sconosciuta che si avvicini il più possibile alle osservazioni senza risultare né troppo approssimativa né, nel caso opposto, troppo irregolare. </p>
 
 
-<p> La prima parte di $RSS$ definisce una misura di distanza dai dati mentre la seconda parte definisce una **termine penalità** che va  a penalizzare la variabilità della funzione $f$, la quantità $\lambda\int f''(t)^2 dt$  è quindi una misura del cambiamento globale nella funzione $f'(t)$ </p>
-* se $f$ è smussata  $\int f'(t)$ sarà costante  e  $\int f''(t)$ avrà un valore molto piccolo;
-* se $f$ è irregolare  $\int f'(t)$ sarà molto variabile   e  $\int f''(t)$ avrà un valore molto grande;
+<p> La prima parte di $RSS$ definisce una misura di distanza dai dati mentre la seconda parte definisce una **termine penalità** che va a penalizzare la variabilità della funzione $f$, la quantità $\lambda\int f''(t)^2 dt$  è quindi una misura del cambiamento globale nella funzione $f'(t)$ </p>
+* se $f$ è smussata $\int f'(t)$ sarà costante e  $\int f''(t)$ avrà un valore molto piccolo;
+* se $f$ è irregolare $\int f'(t)$ sarà molto variabile   e  $\int f''(t)$ avrà un valore molto grande;
 
 <p>Il parametro $\lambda$ è un **parametro di smoothing** che porterà $f$ ad essere smussata, il parametro assume valori compresi in  $(0,\infty)$ :</p>
 * Con valore $\lambda = 0$ i suoi effetti sono nulli e quindi la funzione assumerà un comportamento molto irregolare;
 * con $\lambda = \infty$ la funzione sarà una linea retta che passa il più vicino possibile ai dati.
 
-<p> Quindi grandi valori di $\lambda$ producono curve smussata, mentre piccoli valori di questo parametro producono curve più irregolari.</p>
-<p>Occorre notare che all'aumentare del valore di $\lambda$ da 0 a $\infty$ il numero di gradi di libertà descresce da $n$ a 2, il parametro di regolarizzazione $\lambda$ controlla l'irregolarità della spline e quindi anche i gradi di libertà effettivi.</p>
+<p> Quindi grandi valori di $\lambda$ producono curve smussata, mentre piccoli valori di questo parametro producono curve più irregolari. </p>
+<p>Occorre notare che all'aumentare del valore di $\lambda$ da 0 a $\infty$ il numero di gradi di libertà descresce da $n$ a 2, il parametro di regolarizzazione $\lambda$ controlla l'irregolarità della spline e quindi anche i gradi di libertà effettivi. </p>
 
 
 <p>La funzione $f(x)$ che **minimizza la RSS** è una **spline cubica naturale ** avente nodi ad ogni punto $x_1,...,x_n$, ovvero è  un polinomio cubico a tratti con nodi a valori distinti di X, derivate prime e seconde continue ad ogni nodo, ed inoltre è lineare nelle regioni al di fuori dei nodi estremi.</p>
@@ -206,29 +212,40 @@ $$
 $$
 
 
-Questo perchè, riscrivendo la spline cubica naturale in termini delle sue funzioni base : </p>
+Questo perché, riscrivendo la spline cubica naturale in termini delle sue funzioni base : </p>
 
 $$
-f(x) = \sum_{j=1}^N \theta_jN_j(x) 
+f(x) = \sum_{j=1}^n N_j(x) \theta_j
 $$
-<p> Dove $N_j$ denota la j-esima funzione base  n-dimensionale della spline cubica naturale,e $\theta_j$  è un generico parametro.</p>
+<p> Dove $N_j$ denota la j-esima funzione base  n-dimensionale della spline cubica naturale, e $\theta_j$  è un generico parametro.</p>
 <p> Si può così riscrivere il criterio di minimizzazione nella seguente forma: </p>
 $$
 RSS(f, \lambda) = (y - N \theta)^T(y -N \theta) + \lambda \theta^T \Omega_n \theta
 $$
 <p>Con $N_{i,j} = N_j(x_i)$ e $\{\Omega_n\}_{j,k} = \int N_j''(t)N_k''(t)dt$ </p>
 
+<p> Il vettore di  coefficenti $\hat{\theta} = (\hat{\theta_1},...,\hat{\theta_n})^T$ è soluzione del seguente problema di minimizzazione</p>
 
-<p>Il vettore $\hat{f}_\lambda$ può essere quindi calcolato come: </p>
+$$
+\hat{\theta} = \underset{\theta \in \mathbb{R}^n}{\operatorname{argmin}}  (y - N \theta)^T(y -N \theta) + \lambda \theta^T \Omega_n \theta
+$$
+<p>che è un problema di *regressione ridge generalizzata*, avente come soluzione:</p>
+
+
+$$
+\hat{\theta} = (N^TN + \lambda \Omega_n)^{-1}N^T y.
+$$
+<p>Dato ll vettore $\hat{f}_\lambda$  soluzione di RSS  </p>
+$$
+\hat{f}_\lambda = \sum_{j=1}^n N_j(x)\hat{\theta}_j
+$$
+<p>può essere scritto come: </p>
 $$
 \hat{f}_\lambda = N(N^TN + \lambda \Omega_n)^{-1}N^Ty
 $$ 
-definendo:
-$$
- S_{\lambda} =  N(N^TN + \lambda \Omega_n)^{-1}N^T
-$$
-Si ha che: 
-
+&nbsp;
+<p>definendo $S_{\lambda} =  N(N^TN + \lambda \Omega_n)^{-1}N^T$
+si ha che: </p>
 $$
 \hat{f}_\lambda = S_{\lambda}y
 $$
@@ -242,9 +259,9 @@ $$
 * è semi-definitia positiva ,ovvero $\forall x \neq 0$  $xS_\lambda x \ge 0$
 
 
-<p> Dato che $S_\lambda$ è simmetrica e semidefinita postiva, essa ammette una **eigendecomposition**.</p>
+<p> Dato che $S_\lambda$ è simmetrica e semi definita positiva, essa ammette una **eigendecomposition**.</p>
 
-<p> Assumendo che N sia invertibile(ovvero esiste una matrice $N^{-1}$ tale che il prodotto matriciale tra le due restituisce la matrice identità), la matrice di smoothing può essere riscritta nel seguente modo:</p>
+<p> Assumendo che N sia invertibile (ovvero esiste una matrice $N^{-1}$ tale che il prodotto matriciale tra le due restituisce la matrice identità), la matrice di smoothing può essere riscritta nel seguente modo:</p>
 <p>$S_\lambda = N(N^T N + \lambda \Omega_N)^{-1} N^T$ </p>
 <p>$=N(N^T N + \lambda (N^T N^{-T}) \Omega_N (N^{-1} N))^{-1} N^T$</p>
 <p>$=N [N^T (N + \lambda N^{-T}) \Omega_N (N^{-1}) N]^{-1} N^T$</p>
@@ -254,7 +271,7 @@ $$
 
 Dove $K = N^{-T} \Omega_N N^{-1}$ è una **matrice di penalità**.
 
-La decomposizione della  matrice  in termini dei suoi autovalori e autovettori è quindi la seguente:
+La decomposizione della matrice in termini dei suoi autovalori e autovettori è quindi la seguente:
 $$
 S_\lambda = \sum_{k=1}^N \rho_k(\lambda) u_k u_k^T
 $$
@@ -281,11 +298,11 @@ $$
 * Il grado della spline è fissato a 3 e
 * I  nodi della spline corrispondono alle osservazioni distinte; 
 
-<p> *Dato un fissato numero di gradi di libertà è possibile ricavare il valore di  $\lambda$*, questo perchè dato che   $df_\lambda = trace(S_{\lambda})$ è monotona in $\lambda$ e possibile invertire la relazione.
+<p> Il parametro $\lambda$ dato regola il gradi di libertà effettivi della smoothing spline, inoltre è possibile ricavare il valore di  $\lambda$ dato un fissato numero di gradi di libertà, questo perchè dato che   $df_\lambda = trace(S_{\lambda})$ è monotona in $\lambda$ è possibile invertire la relazione.</p>
 
 
-<p> Uno dei metodi per valutare  la scelta del parametro $\lambda$ è la **Cross-Validation**, in particolare la **Leave-One-Out  (LOOCV)**  che consiste nell'adattare il modello su N-1 osservazioni e effettuare una predizione sull'unica osservazione non vista. Questa procedura viene eseguita per N volte.</p>
-<p>L'**errore di Cross-Validation Leave One Out** è  calcolato come segue: </p>
+<p> Uno dei metodi per valutare la scelta del parametro $\lambda$ è la **Cross-Validation**, in particolare la **Leave-One-Out (LOOCV)** che consiste nell'adattare il modello su N-1 osservazioni e effettuare una predizione sull'unica osservazione non vista. Questa procedura viene eseguita per N volte.</p>
+<p>L'**errore di Cross-Validation Leave One Out** è calcolato come segue: </p>
 
 $$
 RSS_{CV}(\lambda) = \sum_{i=1}^N \left (y_i -\hat{f}_\lambda^{(-i)}(x_i)\right )^2
@@ -301,11 +318,11 @@ $$
 * il termine $\hat{f}_\lambda$ indica  la funzione spline adattata a *tutte* le osservazioni ( anche $x_i$) e valutata in $x_i$ 
 * $\{S_\lambda\}_{ii}$ l'elemento diagonale i-esimo della matrice $S_\lambda$.
 
-<p>Questa formula  afferma  che è possibile calcolare in modo rapido ciascuno degli **adattameti leave one out** utilizzando solo la funzione adattata a tutte le osservazioni.</p>
+<p>Questa formula afferma che è possibile calcolare in modo rapido ciascuno degli **adattameti leave one out** utilizzando solo la funzione adattata a tutte le osservazioni. </p>
 
 
-<p>La LOOCV  può essere interpretata come una somma dei residui quadtrati *pesata* con $w_i = \frac{1}{(1 - \{S_\lambda\}_{ii})^2}$, dato che $\{S_\lambda\}_{ii}$ è diverso per ogni osservazione, il criterio da un peso diverso ad ogni osservazione.
-Un miglioramento della LOOCV è la Generalized Cross-Validation (GCV) che permette di equilibrare il peso delle diverse osservazioni, questo criterio trova il valore di $\lambda$ che miniminzza</p>
+<p>La LOOCV può essere interpretata come una somma dei residui quadtrati *pesata* con $w_i = \frac{1}{(1 - \{S_\lambda\}_{ii})^2}$, dato che $\{S_\lambda\}_{ii}$ è diverso per ogni osservazione, il criterio da un peso diverso ad ogni osservazione.
+Un miglioramento della LOOCV è la Generalized Cross-Validation (GCV) che permette di equilibrare il peso delle diverse osservazioni, questo criterio trova il valore di $\lambda$ che minimizza</p>
 
 $$
 GCV(\lambda) = \frac{\frac{1}{n} \sum_ {i=1}^n (y_i - \hat{f}_\lambda(x_i))^2}{(1 - trace(S_\lambda)/n)^2}
@@ -314,14 +331,14 @@ $$
 
 ## 2.4 Compromesso Bias-Varianza
 
-<p>Il compromesso bias-varianza è una proprietà specifica di tutti i modelli di apprendimento automatico (supervisionati), che impone un compromesso tra la “flessibilità” del modello e il comportamento su dati non visti.</p>
+<p>Il compromesso bias-varianza è una proprietà specifica di tutti i modelli di apprendimento automatico (supervisionati), che impone un compromesso tra la “flessibilità” del modello e il comportamento su dati non visti. </p>
 
 
 <p>La **varianza** si riferisce alla *variazione del valore della funzione stimata $\hat f$ al variare dei dati di training* che vengono utilizzati, se un metodo presenta una varianza elevata allora piccole variazioni nei dati di training possono portare a grandi variazioni in $\hat f$. </p>
 
 <p> Il **bias** si riferisce alla *distorsione introdotta approssimando un problema complesso con un modello più semplice*.</p>
 
-<p> Occorre definire un compromesso tra bias e varianza poichè al crescere  dell'una, descrescerà l'altra.</p>
+<p> Occorre definire un compromesso tra bias e varianza poiché al crescere  dell'una, decrescerà l'altra.</p>
 
 <p> La scelta del valore di $df_\lambda$ ha effetto sul bias e sulla varianza in quanto:</p>
 * valori **troppo bassi di $df_\lambda$** provocano un **alto bias** e una **bassa varianza** e la funzione andrebbe in **underfitting** dato che il modello sarà troppo semplice;
@@ -346,10 +363,10 @@ $$
  J[f] = \int \int_{\mathbb{R}^2} \left[ \left( \frac{\partial^2 f(x)}{\partial x_1^2}\right)^2 + 2\left( \frac{\partial^2 f(x)}{\partial x_1 \partial x_2}\right)^2 +\left( \frac{\partial^2 f(x)}{\partial x_2^2}\right)^2\right]dx_1dx_2.
 $$
 
-<p>Utilizzando per l'ottimizzazione questa penalità si ottiene una superficie bidimensionale smussata, nota come **spline a superficie sottile** (thin-plate spline). Condivide molte proprietà con la smoothing spline unidimensionale.</p>
+<p>Utilizzando per l'ottimizzazione questa penalità si ottiene una superficie bidimensionale smussata, nota come **spline a superficie sottile** (thin-plate spline). Condivide molte proprietà con la smoothing spline unidimensionale. </p>
 
 * Per $\lambda \to 0$ si ottiene come soluzione una funzione di interpolazione;
-* Per $\lambda \to \infty$ la soluzione converge al piano dei minimi quadtrati;
+* Per $\lambda \to \infty$ la soluzione converge al piano dei minimi quadrati;
 
 <p> Per valori intermedi, la soluzione può essere rappresentata come un **espansione lineare delle funzioni base**. La soluzione ha la forma </p>
 
@@ -357,9 +374,9 @@ $$
 $$
 f(x) = \beta_0 + \beta^Tx + \sum_{j=1}^Ta_jh_j(x)w
 $$
-<p>Dove $h_j = ||x - x_j||^2log||x -x_j||$ sono **funzioni base radiali**. I coefficienti si determinano sostituendo la $f(x)$ in $$\min_f \sum_{i=1}^N \{y_i - f(x_i)\}^2 + \lambda J[f]$$ 
+<p>Dove $h_j = ||x - x_j||^2log||x -x_j||$. I coefficienti si determinano sostituendo la $f(x)$ in $$\min_f \sum_{i=1}^N \{y_i - f(x_i)\}^2 + \lambda J[f]$$ 
 
-<p> In generale si può rappresentare $f \in \mathbb{R}^d$ come una espansione di qualsiasi grande insieme di funzioni base, e controllare la complessità applicando un regolarizzatore come quello visto precedentemente.</p> 
+<p> In generale si può rappresentare $f \in \mathbb{R}^d$ come una espansione di qualsiasi grande insieme di funzioni base, e controllare la complessità applicando un regolarizzatore come quello visto precedentemente. </p> 
 
 
 
@@ -372,12 +389,19 @@ $$
 $$
 f(X_1,X_2) = \sum_{i=1}^{K_1}\sum_{j=1}^{K_2} \theta_{ij} h_{1i}(X_1)h_{2j}(X_2)
 $$
-<p>Si può quindi costruire una base di una funzione spline multidimensionale dai  prodotti  di tutte le coppie di basi di funzioni di ogni  smoothing-spline univariata </p>
-
+<p>Si può quindi costruire una base di una funzione spline multidimensionale dai prodotti di tutte le coppie di basi di funzioni di ogni  smoothing-spline univariata. </p>
+<p>L'aumentare della dimensione comporta una crescita esponenziale in termini di funzioni base e occorre quindi ridurre il numero di funzioni per ogni coordinata, uno dei modi più naturali utilizzata da una classe ristretta delle splines mutlidimensionali è quello di assumere che la funzione $f$ sia **additiva**, ovvero: </p>
+$$
+f(X) = \alpha + f_1(X_1) + ... + f_d(X_d)
+$$
+<p> In questo modo il termine di penalità può essere espresso come </p>
+$$
+J[f] = J(f_1 + f_2 + ... + f_d) = \sum_{j=1}^d \int f_j''(t_j)^2 dt_j
+$$
 
  
 # 3. Implementazioni in R
-<p> R è un linguaggio e  ambiente di programmazione nato negli anni 90 per usi  statistici . R è oggi molto diffuso, grazie alla flessibilità della sintassi, alla sua natura modulare e la sempre più vasta comunità che ne supporta lo sviluppo. R rappresenta oggi un framework in grado di acquisire moli di dati dalle più disparate sorgenti, offrendo strumenti per una loro analisi immediata ed efficiente.</p>
+<p> R è un linguaggio e ambiente di programmazione nato negli anni 90 per usi statistici. R è oggi molto diffuso, grazie alla flessibilità della sintassi, alla sua natura modulare e la sempre più vasta comunità che ne supporta lo sviluppo. R rappresenta oggi un framework in grado di acquisire moli di dati dalle più disparate sorgenti, offrendo strumenti per una loro analisi immediata ed efficiente. </p>
 
 <p>Sono presenti due principali implementazioni della smoothing spline in R, in due package distinti: </p>
 * la funzione **smooth.spline** nel package **stats**;
@@ -438,9 +462,9 @@ Gli argomenti in input alla funzione smooth.spline sono i seguenti:
 # 4. Esempio: Graduate Admission
 
 ## 4.1 Dataset
-<p>Vediamo ora un esempio pratico utilizzando come  dataset di riferiemnto **Graduate Admission** ( link: https://www.kaggle.com/mohansacharya/graduate-admissions). Il dataset è stato creato per la previsione delle ammissioni dei laureati,contiene diversi variabili  considerati importanti durante l'applicazione per i programmi di master. Le feature incluse sono:</p>
+<p>Vediamo ora un esempio pratico utilizzando come dataset di riferimento **Graduate Admission** ( link: https://www.kaggle.com/mohansacharya/graduate-admissions). Il dataset è stato creato per la previsione delle ammissioni dei laureati, contiene diversi variabili considerati importanti durante l'applicazione per i programmi di master. Le feature incluse sono:</p>
 
-* **GRE Scores** (General Test Score )
+* **GRE Scores** (General Test Score)
 * **TOEFL Scores** (Test Of English as a Foreign Language)
 * **University Rating** ( su 5 )
 * **Statement of Purpose (SOP)** e **Letter of Recommendation Strength (LOR)** ( su 5 )
@@ -448,8 +472,8 @@ Gli argomenti in input alla funzione smooth.spline sono i seguenti:
 * **Research Experience** ( booleano )
 * **Chance of Admit** (da 0 a 1)
 
-<p>Questo dataset ha  lo scopo di aiutare gli studenti nella selezione delle università con i loro profili. Il risultato previsto dà loro un'idea delle loro possibilità per una particolare università.</p>
-<p>Utilizzando il Dataset è possibile effettuare un task di regressione utilizzando le variabili predittive fornite (punteggio GRE, punteggio TOEFL, rating universitario, ecc.) per determinare la relazione tra i punteggi ottenuti e  la probabilità di ammissione di un nuovo candidato, valutando quanto quindi quanto questi test siano importanti per la probabilità di essere amessi.</p>
+<p>Questo dataset ha lo scopo di aiutare gli studenti nella selezione delle università con i loro profili. Il risultato previsto dà loro un'idea delle loro possibilità per una particolare università. </p>
+<p>Utilizzando il Dataset è possibile effettuare un task di regressione utilizzando le variabili predittive fornite (punteggio GRE, punteggio TOEFL, rating universitario, ecc.) per determinare la relazione tra i punteggi ottenuti e la probabilità di ammissione di un nuovo candidato, valutando quanto quindi quanto questi test siano importanti per la probabilità di essere ammessi. </p>
 &nbsp;
 
 **Caricamento del dataset**
@@ -467,7 +491,7 @@ head(data,20)
 ```
 &nbsp;
 
-<p>Di seguito verranno mostrate diverse applicazioni della  smoothing spline  utilizzando come variabile di risposta la variabile  **Chance.of.Admit**, e un unica variabile predittiva, scelta tra le variabili numeriche del dataset.</p>
+<p>Di seguito verranno mostrate diverse applicazioni della  smoothing spline  utilizzando come variabile di risposta la variabile  **Chance.of.Admit**, e un’unica variabile predittiva, scelta tra le variabili numeriche del dataset.</p>
 <p> **Variabile Predittiva: GRE Score** </p>
 <p> Considero come variabile predittive il punteggio GRE, plottando i valori di **Chance.of.Admit** per diversi valori della variabile **GRE Score**.</p>
 &nbsp;
@@ -514,7 +538,7 @@ legend("bottomright", c(paste("df=2, ",'lambda',"=",format(spline_A$lambda,scien
 
 
 
-### 4.3 Addattare la smoothing spline con la cross-validation 
+### 4.3 Adattare la smoothing spline con la cross-validation 
 
 <p> Vediamo di adattare la smoothing spline stimando i parametri di $\lambda$ e di $df$  in modo da ottenere un risultato ottimale.</p>
 <p>Richiamando la funzione *smooth.spline* non specificando nessuno dei parametri quali lambda, df e spar, la funzione effettuerà automaticamente una cross validation per stimare i parametri di smoothing. </p>
@@ -621,7 +645,9 @@ legend("bottomright",paste("df=",fit$df ,'lambda',"=",format(fit$lambda,scientif
 ```
 
 # 5. Conclusioni
-<p> In conclusione le smoothing splines sono un ottimo strumento appartenente alla famiglia di metodi non parametrici, rispetto all'utilizzo di approcci più limitati come la regressione lineare o polinomiale.E stato mostrato un esempio di applicazione sul Dataset Graduation con i seguenti risultati:</p>
+<p>In conclusione le smoothing spline sono un tipo di spline ottenute dalla minimizzazione della somma dei quadrati dei residui soggetto ad una penalità di smoothing, viene utilizzato il parametro $\lambda$ per regolarizzare la funzione  in modo che assumi una forma né troppo irregolare né troppo approssimativa in base ai dati.</p>
+<p>Il metodo smoothing spline appartiene appartenente alla famiglia di metodi non parametrici e consente di ottenere risultati superiori rispetto all'utilizzo di approcci più limitati come la regressione lineare o polinomiale. </p>
+<p>E stato mostrato un esempio di applicazione in R  sul dataset Graduation Admission, con i seguenti risultati:</p>
 
 
 | X | df            |  $\lambda$   | RSS |
